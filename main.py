@@ -63,15 +63,14 @@ async def time(ctx):
 
 
 @bot.command(name='timeshift', help='Manually set the timeshift by choice. Use -h -m -s to choose type of time. Use <timeshift clear> to reset the timeshift.')
-async def timeshift(ctx, command):
-	commands = command.split()
-	if commands[0] == "-h":
-		os.environ['TIMESHIFTED_H'] = commands[1]
-	elif commands[0] == "-m":
-		os.environ['TIMESHIFTED_M'] = commands[1]
-	elif commands[0] == "-s":
-		os.environ['TIMESHIFTED_S'] = commands[1]
-	elif commands[0] == "clear":
+async def timeshift(ctx, args, time):
+	if args == "-h":
+		os.environ['TIMESHIFTED_H'] = time
+	elif args == "-m":
+		os.environ['TIMESHIFTED_M'] = time
+	elif args == "-s":
+		os.environ['TIMESHIFTED_S'] = time
+	elif args == "clear":
 		os.environ['TIMESHIFTED_H'] = "0"
 		os.environ['TIMESHIFTED_M'] = "0"
 		os.environ['TIMESHIFTED_S'] = "0"
