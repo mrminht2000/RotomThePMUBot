@@ -1,3 +1,4 @@
 ﻿PMUCrawler/PMUCrawler/bin
 __pycache__
 PMUCrawler/PMUCrawler/obj
+.env
