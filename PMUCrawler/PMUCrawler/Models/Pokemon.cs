@@ -8,11 +8,13 @@ namespace PMUCrawler.Models
     {
         public string Name { get; set; }
         public List<Object> RawInfo { get; set; }
+        public string Note { get; set; }
 
         public Pokemon (string name)
         {
             Name = name;
             RawInfo = new List<Object>();
+            Note = null;
         }
     }
 }

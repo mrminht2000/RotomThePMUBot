@@ -78,6 +78,12 @@ namespace PMUCrawler
                     }
                     var pkm = new Pokemon(detail[1].InnerText.RemoveNewLineTag());
                     pkm.RawInfo = ReducePokemonObtainGuide(detail[2]);
+
+                    var note = item.SelectNodes("td/dl/dd")?.ToList();
+                    if (note != null && note.Count != 0)
+                    {
+                        pkm.Note = note[0].InnerText.RemoveHtmlTag().RemoveNewLineTag().Replace("SRSecret Room", " Secret Room").Replace("HHidden", " Hidden");
+                    }
                     res.Add(pkm);
                 }
             }
@@ -100,13 +106,13 @@ namespace PMUCrawler
                     changeTypeInfo.Add(tempString, new List<string>());
                     foreach (var item2 in ulInside)
                     {
-                        changeTypeInfo[tempString].Add(item2.InnerText.RemoveHtmlTag().RemoveNewLineTag().Replace("SRSecret Room", " Secret Room"));
+                        changeTypeInfo[tempString].Add(item2.InnerText.RemoveHtmlTag().RemoveNewLineTag().Replace("SRSecret Room", " Secret Room").Replace("HHidden", " Hidden"));
                     }
 
                     res.Add(changeTypeInfo);
                 } else
                 {
-                    res.Add(tempString.Replace("SRSecret Room", " Secret Room"));
+                    res.Add(tempString.Replace("SRSecret Room", " Secret Room").Replace("HHidden", " Hidden"));
                 }
                 Console.WriteLine(tempString);
             }
