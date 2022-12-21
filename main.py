@@ -1,7 +1,8 @@
 import os
 
 from helpers import get_time
-from pokemon_data import get_pokemon_data
+from pokemon_data import get_pmu_pokemon_data, get_recruitable_data, get_ability_data
+from pokemon_api import pokemon, ability
 import discord
 from discord.ext import commands
 from pytz import timezone
@@ -9,8 +10,6 @@ from dotenv import load_dotenv
 from webserver import keep_alive
 
 from datetime import datetime, timedelta
-
-keep_alive()
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
@@ -40,7 +39,7 @@ async def ehe(ctx):
 	await ctx.send(ehe_gif)
 
 
-@bot.command(name='broken', help='Mock the best PMU bot in the world')
+@bot.command(name='broken', help='Mock the best PMU bot in the world.')
 async def bully(ctx):
 	id = '<@' + str(ctx.message.author.id) + '>'
 	gif = "https://c.tenor.com/vteeAE47mHgAAAAd/mihoyo-genshin.gif"
@@ -48,6 +47,14 @@ async def bully(ctx):
 	await ctx.send(response)
 	await ctx.send(gif)
 
+
+@bot.command(name='hey', help='Say hi to the bot.')
+async def hey(ctx):
+	id = '<@' + str(ctx.message.author.id) + '>'
+	response = "Hey " + id + ", did you know that in terms of male human and female Pokémon breeding, Vaporeon is the most compatible Pokémon for humans? Not only are they in the field egg group, which is mostly comprised of mammals, Vaporeon are an average of 3\"03' tall and 63.9 pounds. this means they're large enough to be able to handle human dicks, and with their impressive Base Stats for HP and access to Acid Armor, you can be rough with one. Due to their mostly water based biology, there's no doubt in my mind that an aroused Vaporeon would be incredibly wet, so wet that you could easily have sex with one for hours without getting sore. They can also learn the moves Attract, Baby-Doll Eyes, Captivate, Charm, and Tail Whip, along with not having fur to hide nipples, so it'd be incredibly easy for one to get you in the mood. With their abilities Water Absorb and Hydration, they can easily recover from fatigue with enough water. No other Pokémon comes close to this level of compatibility. Also, fun fact, if you pull out enough, you can make your Vaporeon turn white."
+	gif = "https://i.kym-cdn.com/photos/images/newsfeed/001/017/359/6d2.gif"
+	await ctx.send(response)
+	await ctx.send(gif)
 
 @bot.command(name='time', help='Check the time in PMU game')
 async def time(ctx):
@@ -75,13 +82,36 @@ async def timeshift(ctx, args=None, time="0"):
 		os.environ['TIMESHIFTED_M'] = "0"
 		os.environ['TIMESHIFTED_S'] = "0"
 		
-	response = "The timeshift is " + os.getenv('TIMESHIFTED_H') + " hours, " + os.getenv('TIMESHIFTED_M') + " minutes and " + os.getenv('TIMESHIFTED_S') + "seconds."
+	response = "The timeshift is " + os.getenv('TIMESHIFTED_H') + " hours, " + os.getenv('TIMESHIFTED_M') + " minutes and " + os.getenv('TIMESHIFTED_S') + " seconds."
 	await ctx.send(response)
 
 
-@bot.command(name='pokemon', help='Where to get pokemon in PMU game.')
-async def pokemon(ctx, name):
-	res = get_pokemon_data(name)
+@bot.command(aliases=['pmu', 'get'], help='Where to get pokemon in PMU game.')
+async def pmu_data(ctx, *argv):
+	res = get_pmu_pokemon_data(" ".join(argv))
+	response = str(res)
+	await ctx.send(response)
+
+
+@bot.command(aliases=['pokemon', 'p'], help='Show information about pokemon.')
+async def get_pokemon(ctx, *argv):
+	res = pokemon(" ".join(argv))
+	response = str(res)
+	await ctx.send(response)
+
+
+@bot.command(aliases=['ability', 'ab'], help='Show information about ability.')
+async def get_ability(ctx, *argv):
+	status, res = ability(" ".join(argv))
+	response = res if status == 0 else res['effect']
+	status, abi_pmu = get_ability_data(abi)
+	response = res + '\n*PMU*: ' + (abi_pmu["Description"] if status == 1 else abi_pmu)
+	await ctx.send(response)
+
+
+@bot.command(aliases=['recruite', 'rr'], help='Where to recruite pokemon in PMU game.')
+async def retcruitable_data(ctx, *argv):
+	res = get_recruitable_data(" ".join(argv))
 	response = str(res)
 	await ctx.send(response)
 
@@ -110,6 +140,4 @@ async def on_ready():
 	print(f'{bot.user.name} has connected to Discord!')
 	print(f'selfbot is ready!')
 
-
-keep_alive()
 bot.run(TOKEN)

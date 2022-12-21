@@ -5,15 +5,18 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using static PMUCrawler.Models.Recruitment;
 
 namespace PMUCrawler
 {
     public static class PMUData
     {
-        private const string BaseLink = "https://pokemonmysteryuniverse.fandom.com/wiki/";
-        private const string MysteryEggLink = "Mystery_Eggs";
-        private const string PokemonObtainGuide = "Pokémon_Obtaining_Guide";
-        public static List<MysteryEgg> GetMysteryEggInfo()
+        private const string BaseLink = "https://pokemonmysteryuniverse.fandom.com";
+        private const string MysteryEggLink = "/wiki/Mystery_Eggs";
+        private const string PokemonObtainGuide = "/wiki/Pokémon_Obtaining_Guide";
+        private const string RecruitableGuide = "/wiki/Recruitable_Pokémon";
+        private const string AbilityLink = "/wiki/Abilities";
+        public static List<MysteryEgg> GetMysteryEggs()
         {
             var eggs = new List<MysteryEgg>();
             var _web = HtmlWebSingleton.GetInstance();
@@ -23,7 +26,7 @@ namespace PMUCrawler
             var tempEgg = new MysteryEgg
             {
                 Name = "",
-                Locations = new List<Location>()
+                Locations = new List<EggLocation>()
             };
 
             foreach (var item in eggsTable)
@@ -44,22 +47,22 @@ namespace PMUCrawler
                     tempEgg = new MysteryEgg
                     {
                         Name = detail[1].InnerText.RemoveNewLineTag(),
-                        Locations = new List<Location>()
+                        Locations = new List<EggLocation>()
                     };
 
-                    var location = new Location(detail[2].InnerText.RemoveNewLineTag(), detail[3].InnerText.RemoveNewLineTag());
+                    var location = new EggLocation(detail[2].InnerText.RemoveNewLineTag(), detail[3].InnerText.RemoveNewLineTag());
                     tempEgg.Locations.Add(location);
                 }
                 else if (detail.Count() == 2)
                 {
-                    var location = new Location(detail[0].InnerText.RemoveNewLineTag(), detail[1].InnerText.RemoveNewLineTag());
+                    var location = new EggLocation(detail[0].InnerText.RemoveNewLineTag(), detail[1].InnerText.RemoveNewLineTag());
                     tempEgg.Locations.Add(location);
                 }
             }
             return eggs;
         }
 
-        public static List<Pokemon> GetPokemonsInfo ()
+        public static List<Pokemon> GetPokemons()
         {
             var res = new List<Pokemon>();
             var _web = HtmlWebSingleton.GetInstance();
@@ -91,7 +94,94 @@ namespace PMUCrawler
             return res;
         }
 
-        public static List<Object> ReducePokemonObtainGuide(HtmlNode doc)
+        public static List<Recruitment> GetRecruitments()
+        {
+            var res = new List<Recruitment>();
+            var _web = HtmlWebSingleton.GetInstance();
+            HtmlDocument document = _web.Load(BaseLink + RecruitableGuide);
+
+            var recuitTable = document.DocumentNode.SelectNodes("//*[@id='mw-content-text']/div/table[3]/tbody/tr").ToList();
+
+            var tempRecruitment = new Recruitment
+            {
+                Name = "",
+                Locations = new List<RecruitLocation>()
+            };
+
+            foreach (var item in recuitTable)
+            {
+                var detail = item.SelectNodes("td")?.ToList();
+                if (detail == null)
+                {
+                    continue;
+                }
+
+                if (detail.Count() == 6)
+                {
+                    if (!tempRecruitment.Name.Equals(""))
+                    {
+                        res.Add(tempRecruitment);
+                    }
+
+                    tempRecruitment = new Recruitment
+                    {
+                        Name = detail[1].InnerText.RemoveNewLineTag(),
+                        Locations = new List<RecruitLocation>()
+                    };
+
+                    var location = new RecruitLocation(detail[2].InnerText.RemoveNewLineTag(), detail[5].InnerText.RemoveNewLineTag(), detail[4].InnerText.RemoveNewLineTag(), detail[3].InnerText.RemoveNewLineTag());
+                    tempRecruitment.Locations.Add(location);
+                }
+                else if (detail.Count() == 4)
+                {
+                    var location = new RecruitLocation(detail[0].InnerText.RemoveNewLineTag(), detail[3].InnerText.RemoveNewLineTag(), detail[2].InnerText.RemoveNewLineTag(), detail[1].InnerText.RemoveNewLineTag());
+                    tempRecruitment.Locations.Add(location);
+                }
+            }
+
+            if (!tempRecruitment.Name.Equals(""))
+            {
+                res.Add(tempRecruitment);
+            }
+            return res;
+        }
+
+        public static List<Ability> GetAbilities()
+        {
+            var res = new List<Ability>();
+            var _web = HtmlWebSingleton.GetInstance();
+            HtmlDocument document = _web.Load(BaseLink + AbilityLink);
+
+            var abilityTable = document.DocumentNode.SelectNodes("//*[@id='mw-content-text']/div/ul").ToList();
+    
+            foreach (var abilityGroup in abilityTable)
+            {
+                var abilities = abilityGroup.SelectNodes("li").ToList();
+                foreach (var ability in abilities)
+                {
+                    var tempAbility = new Ability(ability.InnerText.RemoveHtmlTag(), "Hasn't been described in PMU game!", "Unknown");
+                    var link = ability.SelectSingleNode("a")?.Attributes["href"] ?? null;
+                    if (link != null)
+                    {
+                        _web = HtmlWebSingleton.GetInstance();
+                        var docAbility = _web.Load(BaseLink + link.Value);
+                        var shortDescription = docAbility.DocumentNode.SelectSingleNode("//*[@id='mw-content-text']/div/p[1]");
+                        var description = docAbility.DocumentNode.SelectSingleNode("//*[@id='mw-content-text']/div/p[2]") ?? null;
+                        if (String.IsNullOrEmpty(description.InnerText.RemoveHtmlTag().RemoveNewLineTag()) || description == null)
+                        {
+                            description = docAbility.DocumentNode.SelectSingleNode("//*[@id='mw-content-text']/div/p[3]");
+                        }
+                        tempAbility.Description = description.InnerText.RemoveHtmlTag().RemoveNewLineTag().Replace("&#160;", " ");
+                        tempAbility.ShortDescription = shortDescription.InnerText.RemoveHtmlTag().RemoveNewLineTag().Replace("&#160;", " ");
+                    }
+                    Console.WriteLine(tempAbility.Name + ": " +tempAbility.Description);
+                    res.Add(tempAbility);
+                }
+            }
+            return res;
+        }
+
+        private static List<Object> ReducePokemonObtainGuide(HtmlNode doc)
         {
             var detail = doc.SelectNodes("ul/li")?.ToList();
             var res = new List<Object>();

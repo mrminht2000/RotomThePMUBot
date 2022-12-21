@@ -14,9 +14,8 @@ namespace PMUCrawler
        
         static void Main(string[] args)
         {
-            var res = PMUData.GetPokemonsInfo();
-
-            JsonExtensions.SaveAsJson(res, "pkm.json");
+            var res = PMUData.GetAbilities();
+            JsonExtensions.SaveAsJson(res, "abilities.json");
         }
     }
 }
