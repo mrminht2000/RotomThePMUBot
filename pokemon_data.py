@@ -12,7 +12,7 @@ def get_pokemon_data(name):
 			except:
 				for i in pkm["RawInfo"]:
 					for key, value in i.items():
-						res = res + "   **" + str(key) + "**:\n     " + "\n    ".join(value) + '\n\n'
+						res = res + "   **" + str(key) + "**:\n    " + "\n    ".join(value) + '\n\n'
 
 			if (pkm["Note"] is not None):
 				res = res + "\n  ```css\n" + pkm["Note"] + "\n```"

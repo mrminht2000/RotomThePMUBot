@@ -63,7 +63,7 @@ async def time(ctx):
 
 
 @bot.command(name='timeshift', help='Manually set the timeshift by choice. Use -h -m -s to choose type of time. Use <timeshift clear> to reset the timeshift.')
-async def timeshift(ctx, args, time):
+async def timeshift(ctx, args=None, time="0"):
 	if args == "-h":
 		os.environ['TIMESHIFTED_H'] = time
 	elif args == "-m":
@@ -84,6 +84,22 @@ async def pokemon(ctx, name):
 	res = get_pokemon_data(name)
 	response = str(res)
 	await ctx.send(response)
+
+
+@bot.command(name='map', help='Show PMU World Map.')
+async def map(ctx, area=None):
+	picture = discord.File("Data/Map/WorldMap.png")
+	if area.lower() == "exbel":
+		picture = discord.File("Data/Map/ExbelMap.png")
+	elif area.lower() == "archford":
+		picture = discord.File("Data/Map/ArchfordMap.png")
+	elif area.lower() == "tanren":
+		picture = discord.File("Data/Map/TanrenMap.png")
+	elif area.lower() == "winden":
+		picture = discord.File("Data/Map/WindenMap.png")
+	elif area.lower() == "help":
+		picture = discord.File("Data/Map/ReferenceMap.png")
+	await ctx.send(file=picture)
 
 	
 @bot.event
