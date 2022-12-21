@@ -94,14 +94,14 @@ async def pmu(ctx, *argv):
 
 
 @bot.command(name='pokemon', aliases=['pkm', 'p'], help='Show information about pokemon.')
-async def pokemon(ctx, *argv):
+async def get_pokemon(ctx, *argv):
 	res = pokemon(" ".join(argv))
 	response = str(res)
 	await ctx.send(response)
 
 
 @bot.command(name='ability', aliases=['abi', 'ab'], help='Show information about ability.')
-async def ability(ctx, *argv):
+async def get_ability(ctx, *argv):
 	status, res = ability(" ".join(argv))
 	response = res if status == 0 else res['effect']
 	status, abi_pmu = get_ability_data(" ".join(argv))
@@ -109,8 +109,8 @@ async def ability(ctx, *argv):
 	await ctx.send(response)
 
 
-@bot.command(name='recruite', aliases=['rr'], help='Where to recruite pokemon in PMU game.')
-async def retcruite(ctx, *argv):
+@bot.command(name='recruit', aliases=['rr'], help='Where to recruit pokemon in PMU game.')
+async def get_retcruit(ctx, *argv):
 	res = get_recruitable_data(" ".join(argv))
 	response = str(res)
 	await ctx.send(response)

@@ -60,5 +60,3 @@ def ability(name=None, id=None):
         for eff in res.json()['effect_entries']:
             if eff['language']['name'] == 'en':
                 return 1, eff
-
-ability('No guard')
