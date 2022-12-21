@@ -86,31 +86,31 @@ async def timeshift(ctx, args=None, time="0"):
 	await ctx.send(response)
 
 
-@bot.command(aliases=['pmu', 'get'], help='Where to get pokemon in PMU game.')
-async def pmu_data(ctx, *argv):
+@bot.command(name='pmu', aliases=['get'], help='Where to get pokemon in PMU game.')
+async def pmu(ctx, *argv):
 	res = get_pmu_pokemon_data(" ".join(argv))
 	response = str(res)
 	await ctx.send(response)
 
 
-@bot.command(aliases=['pokemon', 'p'], help='Show information about pokemon.')
-async def get_pokemon(ctx, *argv):
+@bot.command(name='pokemon', aliases=['pkm', 'p'], help='Show information about pokemon.')
+async def pokemon(ctx, *argv):
 	res = pokemon(" ".join(argv))
 	response = str(res)
 	await ctx.send(response)
 
 
-@bot.command(aliases=['ability', 'ab'], help='Show information about ability.')
-async def get_ability(ctx, *argv):
+@bot.command(name='ability', aliases=['abi', 'ab'], help='Show information about ability.')
+async def ability(ctx, *argv):
 	status, res = ability(" ".join(argv))
 	response = res if status == 0 else res['effect']
-	status, abi_pmu = get_ability_data(abi)
-	response = res + '\n*PMU*: ' + (abi_pmu["Description"] if status == 1 else abi_pmu)
+	status, abi_pmu = get_ability_data(" ".join(argv))
+	response = response + '\n\n*In PMU Game*: ' + (abi_pmu["Description"] if status == 1 else abi_pmu).replace("Ã©", "é")
 	await ctx.send(response)
 
 
-@bot.command(aliases=['recruite', 'rr'], help='Where to recruite pokemon in PMU game.')
-async def retcruitable_data(ctx, *argv):
+@bot.command(name='recruite', aliases=['rr'], help='Where to recruite pokemon in PMU game.')
+async def retcruite(ctx, *argv):
 	res = get_recruitable_data(" ".join(argv))
 	response = str(res)
 	await ctx.send(response)
