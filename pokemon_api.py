@@ -34,7 +34,7 @@ def pokemon(name):
         resp += '__Abilities:__\n'
         for abi in pkm_abi:
             status, abi_req = ability(name=abi)
-            status, abi_pmu = get_ability_data(abi)
+            status, abi_pmu = get_ability_data(" ".join(abi.split('-')))
             resp += "  " + " ".join(map(lambda x: "**" + x.capitalize() + "**",abi.split('-'))) + ": " + abi_req['short_effect'] + '\n'
             resp += "  *PMU*: " + (abi_pmu["ShortDescription"].replace("Ã©", "é") if status == 1 else abi_pmu) + '\n' 
         
