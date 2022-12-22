@@ -25,13 +25,13 @@ os.environ['TIMESHIFTED_H'] = '0' if os.getenv('TIMESHIFTED_H') is None else os.
 os.environ['TIMESHIFTED_M'] = '0' if os.getenv('TIMESHIFTED_M') is None else os.getenv('TIMESHIFTED_M')
 os.environ['TIMESHIFTED_S'] = '0' if os.getenv('TIMESHIFTED_S') is None else os.getenv('TIMESHIFTED_S')
 
-@bot.command(name='introduce', help='Rotom introduce himself')
+@bot.command(name='introduce', aliases=[], help='Rotom introduce himself')
 async def introduce(ctx):
 	response = "I am the best Pokemon Mystery Universe bot in the world uwu"
 	await ctx.send(response)
 
 
-@bot.command(name='ehe', help='What do you mean EHE?!?')
+@bot.command(name='ehe', aliases=[], help='What do you mean EHE?!?')
 async def ehe(ctx):
 	ehe_gif = "https://c.tenor.com/cZHoFqQEgwkAAAAM/paimon.gif"
 	response = "EHE TE NANDAYO?!?"
@@ -39,7 +39,7 @@ async def ehe(ctx):
 	await ctx.send(ehe_gif)
 
 
-@bot.command(name='broken', help='Mock the best PMU bot in the world.')
+@bot.command(name='broken', aliases=[], help='Mock the best PMU bot in the world.')
 async def bully(ctx):
 	id = '<@' + str(ctx.message.author.id) + '>'
 	gif = "https://c.tenor.com/vteeAE47mHgAAAAd/mihoyo-genshin.gif"
@@ -48,7 +48,7 @@ async def bully(ctx):
 	await ctx.send(gif)
 
 
-@bot.command(name='hey', help='Say hi to the bot.')
+@bot.command(name='hey', aliases=[], help='Say hi to the bot.')
 async def hey(ctx):
 	id = '<@' + str(ctx.message.author.id) + '>'
 	response = "Hey " + id + ", did you know that in terms of male human and female Pokémon breeding, Vaporeon is the most compatible Pokémon for humans? Not only are they in the field egg group, which is mostly comprised of mammals, Vaporeon are an average of 3\"03' tall and 63.9 pounds. this means they're large enough to be able to handle human dicks, and with their impressive Base Stats for HP and access to Acid Armor, you can be rough with one. Due to their mostly water based biology, there's no doubt in my mind that an aroused Vaporeon would be incredibly wet, so wet that you could easily have sex with one for hours without getting sore. They can also learn the moves Attract, Baby-Doll Eyes, Captivate, Charm, and Tail Whip, along with not having fur to hide nipples, so it'd be incredibly easy for one to get you in the mood. With their abilities Water Absorb and Hydration, they can easily recover from fatigue with enough water. No other Pokémon comes close to this level of compatibility. Also, fun fact, if you pull out enough, you can make your Vaporeon turn white."
@@ -56,7 +56,7 @@ async def hey(ctx):
 	await ctx.send(response)
 	await ctx.send(gif)
 
-@bot.command(name='time', help='Check the time in PMU game')
+@bot.command(name='time', aliases=['t'], help='Check the time in PMU game')
 async def time(ctx):
 	current_time = datetime.now(TIMEZONE_UTC)
 	ts_h = int(os.getenv('TIMESHIFTED_H'))
@@ -69,7 +69,7 @@ async def time(ctx):
 	await ctx.send(response)
 
 
-@bot.command(name='timeshift', help='Manually set the timeshift by choice. Use -h -m -s to choose type of time. Use <timeshift clear> to reset the timeshift.')
+@bot.command(name='timeshift', aliases=['ts'], help='Manually set the timeshift by choice. Use -h -m -s to choose type of time. Use <timeshift clear> to reset the timeshift.')
 async def timeshift(ctx, args=None, time="0"):
 	if args == "-h":
 		os.environ['TIMESHIFTED_H'] = time
@@ -116,10 +116,12 @@ async def get_retcruit(ctx, *argv):
 	await ctx.send(response)
 
 
-@bot.command(name='map', help='Show PMU World Map.')
+@bot.command(name='map', aliases=['m'], help='Show PMU World Map.')
 async def map(ctx, area=None):
 	picture = discord.File("Data/Map/WorldMap.png")
-	if area.lower() == "exbel":
+	if area == None:
+		return await ctx.send(file=picture)
+	elif area.lower() == "exbel":
 		picture = discord.File("Data/Map/ExbelMap.png")
 	elif area.lower() == "archford":
 		picture = discord.File("Data/Map/ArchfordMap.png")
